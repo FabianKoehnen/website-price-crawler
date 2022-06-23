@@ -1,0 +1,25 @@
+{
+  "main": "app.php",
+  "finder": [
+    {
+      "notName": "/LICENSE|.*\\.md|.*\\.dist|Makefile|composer\\.json|composer\\.lock/",
+      "exclude": [
+        "doc",
+        "test",
+        "test_old",
+        "tests",
+        "Tests",
+        "vendor-bin"
+      ],
+      "in": "vendor"
+    },
+    {
+      "name": "composer.json",
+      "in": "."
+    },
+    {
+      "name": "*.php",
+      "in": "src"
+    }
+  ]
+}
