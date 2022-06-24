@@ -6,11 +6,6 @@ on:
             - "main"
             - "master"
 
-    pull_request:
-        types:
-            - opened
-            - synchronize
-
 jobs:
     package:
         name: "Release"

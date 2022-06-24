@@ -3,16 +3,13 @@
 
 declare(strict_types=1);
 
-
 namespace App\Command;
-
 
 use App\Reader\CsvReader;
 use App\Writer\CsvWriter;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
-use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,7 +18,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
-#[AsCommand(name: "Website Search Price Crawler")]
+#[AsCommand(name: 'Website Search Price Crawler')]
 class WebsiteSearchPriceCrawler extends Command
 {
     public const ARGUMENT_URL_PATTERN = 'url-pattern';
@@ -35,9 +32,7 @@ class WebsiteSearchPriceCrawler extends Command
     public const OPTION_SLEEP_SECONDS = 'sleep-seconds';
     public const OPTION_SKU_COLUMN_NAME = 'sku-column-name';
 
-    public const VERSION = '1.1.0';
-
-    protected function configure()
+    protected function configure(): void
     {
         $this->addArgument(self::ARGUMENT_URL_PATTERN, InputArgument::REQUIRED, 'pattern for the search page, use "%s" for the location of the sku ')
 
@@ -46,7 +41,6 @@ class WebsiteSearchPriceCrawler extends Command
 
             ->addArgument(self::ARGUMENT_INPUT_FILE, InputArgument::REQUIRED, 'path to the csv with skus')
             ->addArgument(self::ARGUMENT_OUTPUT_FILE, InputArgument::REQUIRED, 'path to the csv with skus')
-
 
             ->addOption(self::OPTION_SLEEP_SECONDS, 's', InputOption::VALUE_OPTIONAL, 'sleep seconds between requests', '1')
             ->addOption(self::OPTION_SKU_COLUMN_NAME, null, InputOption::VALUE_OPTIONAL, 'name of the column of the skus', 'sku')
@@ -66,6 +60,9 @@ class WebsiteSearchPriceCrawler extends Command
 
         $products = [];
         foreach ($skus as $sku) {
+            /* @noinspection DisconnectedForeachInstructionInspection */
+            usleep($input->getOption(self::OPTION_SLEEP_SECONDS) * 1000000);
+
             $uri = sprintf($input->getArgument(self::ARGUMENT_URL_PATTERN), $sku);
             $pageHtml = $this->getPageHtml($uri);
 
@@ -73,7 +70,7 @@ class WebsiteSearchPriceCrawler extends Command
             if ($sku !== $skuFromPage) {
                 $output->writeln(sprintf('<info>Sku "%s" does not match "%s"</info>', $sku, $skuFromPage));
 
-                if (str_contains($pageHtml, $sku)){
+                if (str_contains($pageHtml, $sku)) {
                     $products[] = [
                         'sku' => $sku,
                         'price' => '?',
@@ -90,16 +87,20 @@ class WebsiteSearchPriceCrawler extends Command
             $output->writeln(sprintf('<info>Sku "%s" matches "%s"</info>', $sku, $skuFromPage));
 
             $price = $this->getHtmlElementByXpath($pageHtml, $input->getArgument(self::ARGUMENT_PRICE_XPATH));
-
             $output->writeln(sprintf('<info>Price: %s</info>', $price));
+
+            if (!$price) {
+                $products[] = [
+                    'sku' => $sku,
+                    'price' => '?',
+                ];
+                continue;
+            }
 
             $products[] = [
                 'sku' => $sku,
-                'price' => $price
+                'price' => $price,
             ];
-
-            /** @noinspection DisconnectedForeachInstructionInspection */
-            usleep($input->getOption(self::OPTION_SLEEP_SECONDS) * 1000000);
         }
 
         $this->writeProducts($products, $input->getArgument(self::ARGUMENT_OUTPUT_FILE));
@@ -107,6 +108,9 @@ class WebsiteSearchPriceCrawler extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * @return array<int, string>
+     */
     protected function readSkus(string $filepath, string $skuFieldKey): array
     {
         $csvReader = new CsvReader($filepath);
@@ -119,10 +123,10 @@ class WebsiteSearchPriceCrawler extends Command
         return $skus;
     }
 
-    protected function getPageHtml(string $uri):string
+    protected function getPageHtml(string $uri): string
     {
         $client = new Client();
-        $request = new Request('GET',$uri);
+        $request = new Request('GET', $uri);
 
         return $client->send($request)->getBody()->getContents();
     }
@@ -140,6 +144,9 @@ class WebsiteSearchPriceCrawler extends Command
         return $element;
     }
 
+    /**
+     * @param array<int, array{sku: string, price: string}> $products
+     */
     protected function writeProducts(array $products, string $filepath): void
     {
         $writer = new CsvWriter($filepath);

@@ -14,7 +14,6 @@ use RuntimeException;
  */
 class CsvReader extends AbstractCsvFile implements Iterator
 {
-
     /**
      * @var array<string>
      */
