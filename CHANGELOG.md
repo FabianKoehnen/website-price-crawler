@@ -1,3 +1,16 @@
+# [1.5.0](https://github.com/FabianKoehnen/website-price-crawler/compare/1.4.0...1.5.0) (2022-06-24)
+
+
+### Bug Fixes
+
+* cs-fix ([d87d1ca](https://github.com/FabianKoehnen/website-price-crawler/commit/d87d1ca5162f11bd84f333fc039080714bde068c))
+* fixed action release trigger ([00d35c2](https://github.com/FabianKoehnen/website-price-crawler/commit/00d35c20c00384385528f2ec341791ab68970bdd))
+
+
+### Features
+
+* implemented phpstan ([556e9ca](https://github.com/FabianKoehnen/website-price-crawler/commit/556e9ca467712e7d8bab7c8caaba35c4215ac56e))
+
 # [1.4.0](https://github.com/FabianKoehnen/website-price-crawler/compare/1.3.1...1.4.0) (2022-06-24)
 
 
