@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/FabianKoehnen/website-price-crawler/compare/1.3.1...1.4.0) (2022-06-24)
+
+
+### Features
+
+* when sku does not match but is somewhere else on the page print ? instead of - ([8d75bff](https://github.com/FabianKoehnen/website-price-crawler/commit/8d75bff78e7989e7cfd81972bd25d38b8a1d815b))
+
 ## [1.3.1](https://github.com/FabianKoehnen/website-price-crawler/compare/1.3.0...1.3.1) (2022-06-24)
 
 
