@@ -11,7 +11,7 @@ use Symfony\Component\Console\Application;
 
 $composerData = InstalledVersions::getRootPackage();
 
-$application = new Application($composerData['name'] ?? "unknown", $composerData['version'] ?? "unknown");
+$application = new Application($composerData['name'], $composerData['version']);
 $command = new WebsiteSearchPriceCrawler();
 
 $application->add($command);

@@ -35,9 +35,7 @@ class WebsiteSearchPriceCrawler extends Command
     public const OPTION_SLEEP_SECONDS = 'sleep-seconds';
     public const OPTION_SKU_COLUMN_NAME = 'sku-column-name';
 
-    public const VERSION = '1.1.0';
-
-    protected function configure()
+    protected function configure(): void
     {
         $this->addArgument(self::ARGUMENT_URL_PATTERN, InputArgument::REQUIRED, 'pattern for the search page, use "%s" for the location of the sku ')
 
@@ -66,6 +64,9 @@ class WebsiteSearchPriceCrawler extends Command
 
         $products = [];
         foreach ($skus as $sku) {
+            /** @noinspection DisconnectedForeachInstructionInspection */
+            usleep($input->getOption(self::OPTION_SLEEP_SECONDS) * 1000000);
+
             $uri = sprintf($input->getArgument(self::ARGUMENT_URL_PATTERN), $sku);
             $pageHtml = $this->getPageHtml($uri);
 
@@ -89,17 +90,24 @@ class WebsiteSearchPriceCrawler extends Command
             }
             $output->writeln(sprintf('<info>Sku "%s" matches "%s"</info>', $sku, $skuFromPage));
 
-            $price = $this->getHtmlElementByXpath($pageHtml, $input->getArgument(self::ARGUMENT_PRICE_XPATH));
 
+
+            $price = $this->getHtmlElementByXpath($pageHtml, $input->getArgument(self::ARGUMENT_PRICE_XPATH));
             $output->writeln(sprintf('<info>Price: %s</info>', $price));
+
+            if (!$price){
+                $products[] = [
+                    'sku' => $sku,
+                    'price' => '?',
+                ];
+                continue;
+            }
+
 
             $products[] = [
                 'sku' => $sku,
                 'price' => $price
             ];
-
-            /** @noinspection DisconnectedForeachInstructionInspection */
-            usleep($input->getOption(self::OPTION_SLEEP_SECONDS) * 1000000);
         }
 
         $this->writeProducts($products, $input->getArgument(self::ARGUMENT_OUTPUT_FILE));
@@ -107,6 +115,11 @@ class WebsiteSearchPriceCrawler extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * @param string $filepath
+     * @param string $skuFieldKey
+     * @return array<int, string>
+     */
     protected function readSkus(string $filepath, string $skuFieldKey): array
     {
         $csvReader = new CsvReader($filepath);
@@ -140,6 +153,11 @@ class WebsiteSearchPriceCrawler extends Command
         return $element;
     }
 
+    /**
+     * @param array<int, array{sku: string, price: string}>  $products
+     * @param string $filepath
+     * @return void
+     */
     protected function writeProducts(array $products, string $filepath): void
     {
         $writer = new CsvWriter($filepath);

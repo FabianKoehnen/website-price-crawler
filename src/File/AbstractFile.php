@@ -25,7 +25,7 @@ abstract class AbstractFile
         $this->openStream($filePath, $mode);
     }
 
-    protected function openStream(string $filePath, $mode): void
+    protected function openStream(string $filePath,FileMode $mode): void
     {
         if (FileMode::READ === $mode) {
             if (!file_exists($filePath)) {

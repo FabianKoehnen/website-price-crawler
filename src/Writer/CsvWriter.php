@@ -21,7 +21,7 @@ class CsvWriter extends AbstractCsvFile
     }
 
     /**
-     * @param array<string, string> $data
+     * @param array<int, array<string, string>> $data
      * @return void
      */
     public function write(array $data): void
@@ -35,10 +35,10 @@ class CsvWriter extends AbstractCsvFile
     }
 
     /**
-     * @param $data
+     * @param array<int, array<string, string>> $data
      * @return array<int, string>
      */
-    protected function getHeaders($data): array
+    protected function getHeaders(array $data): array
     {
         $headers = [];
         foreach ($data as $row) {
