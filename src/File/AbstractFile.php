@@ -20,12 +20,12 @@ abstract class AbstractFile
      */
     protected $handle;
 
-    public function __construct(string $filePath,FileMode $mode)
+    public function __construct(string $filePath, FileMode $mode)
     {
         $this->openStream($filePath, $mode);
     }
 
-    protected function openStream(string $filePath,FileMode $mode): void
+    protected function openStream(string $filePath, FileMode $mode): void
     {
         if (FileMode::READ === $mode) {
             if (!file_exists($filePath)) {
