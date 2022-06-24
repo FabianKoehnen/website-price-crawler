@@ -1,0 +1,44 @@
+name: Release
+
+on:
+    push:
+        branches:
+            - "main"
+            - "master"
+
+    pull_request:
+        types:
+            - opened
+            - synchronize
+
+jobs:
+    package:
+        name: "Release"
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 1
+                  persist-credentials: false
+
+            -   name: Install dependencies
+                run: npm ci
+
+            -   name: Release
+                id: release
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                run: npx semantic-release
+
+            -   name: build phar
+                run: |
+                    composer install
+                    bin/box.phar compile
+
+            -   name: Upload binaries to release
+                uses: svenstaro/upload-release-action@v2
+                with:
+                    repo_token: ${{ secrets.GITHUB_TOKEN }}
+                    tag: ${{steps.release.outputs.version}}
+                    file: test.txt
+
