@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/FabianKoehnen/website-price-crawler/compare/1.3.0...1.3.1) (2022-06-24)
+
+
+### Bug Fixes
+
+* fixed phar upload ([45c2bc3](https://github.com/FabianKoehnen/website-price-crawler/commit/45c2bc3a357ccbf080fe88bd04a40c23862d28bf))
+
 # [1.3.0](https://github.com/FabianKoehnen/website-price-crawler/compare/1.2.0...1.3.0) (2022-06-24)
 
 
