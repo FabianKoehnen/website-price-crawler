@@ -72,6 +72,15 @@ class WebsiteSearchPriceCrawler extends Command
             $skuFromPage = $this->getHtmlElementByXpath($pageHtml, $input->getArgument(self::ARGUMENT_SKU_XPATH));
             if ($sku !== $skuFromPage) {
                 $output->writeln(sprintf('<info>Sku "%s" does not match "%s"</info>', $sku, $skuFromPage));
+
+                if (str_contains($pageHtml, $sku)){
+                    $products[] = [
+                        'sku' => $sku,
+                        'price' => '?',
+                    ];
+                    continue;
+                }
+
                 $products[] = [
                     'sku' => $sku,
                     'price' => '-',
